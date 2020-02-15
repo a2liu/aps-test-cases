@@ -1,0 +1,16 @@
+2
+3 1 2 3
+3 4 5 6
+Push 1
+Push 2
+Push 4
+Pop
+Pop
+Push 3
+Push 5
+Pop
+Pop
+Push 6
+Pop
+Pop
+Shutdown
