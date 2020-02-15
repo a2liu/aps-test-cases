@@ -31,17 +31,19 @@ if len(sys.argv) <= 1:
     print("Need to provide an input file!")
     quit(1)
 
-project_dir = os.path.dirname(os.path.realpath(__file__))
 file_path, ext = os.path.splitext(os.path.realpath(sys.argv[1]))
+output_file_basename = ('Main' if ext == '.java' else 'main') + ext
+project_dir = os.path.dirname(os.path.realpath(__file__))
+bin_dir = os.path.join(project_dir, 'bin')
 filename = os.path.basename(file_path)
-output_file = os.path.join(project_dir, 'bin', filename,
-                           ('Main' if ext == '.java' else 'main') + ext)
-classpath = os.path.join(project_dir, 'bin', os.path.basename(file_path))
-binary_file = os.path.join(project_dir, 'bin', os.path.basename(file_path),
-                           'out')
+output_file = os.path.join(bin_dir, filename, output_file_basename)
+classpath = os.path.join(bin_dir, os.path.basename(file_path))
+binary_file = os.path.join(bin_dir, os.path.basename(file_path), 'out')
 test_path = os.path.realpath(sys.argv[2]) if len(sys.argv) > 2 else None
 
 info("Project directory: " + project_dir)
+info(" Output directory: " + bin_dir)
+info("  Output basename: " + output_file_basename)
 info("      Output file: " + output_file)
 info("        Classpath: " + classpath) if ext == '.java' else \
 info("      Binary file: " + binary_file)
@@ -60,13 +62,19 @@ with open(file_path + ext) as f:
 with open(output_file, 'w') as f:
     f.write(txt)
 
-info("Compiling code...")
+with open(os.path.join(bin_dir, output_file_basename), 'w') as f:
+    f.write(txt)
+
+print("Compiling code...")
 if ext == ".java":
     result = subprocess.run(['javac', output_file, '-d', classpath])
 elif ext == ".cpp":
     result = subprocess.run(['g++', '-o', binary_file, output_file])
 elif ext == ".c":
     result = subprocess.run(['gcc', '-o', binary_file, output_file])
+
+with open(output_file) as f:
+    txt = f.read()
 
 if result.returncode != 0:
     exit(1)
