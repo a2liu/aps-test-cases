@@ -62,11 +62,14 @@ with open(output_file, 'w') as f:
 
 info("Compiling code...")
 if ext == ".java":
-    subprocess.run(['javac', output_file, '-d', classpath])
+    result = subprocess.run(['javac', output_file, '-d', classpath])
 elif ext == ".cpp":
-    subprocess.run(['g++', '-o', binary_file, output_file])
+    result = subprocess.run(['g++', '-o', binary_file, output_file])
 elif ext == ".c":
-    subprocess.run(['gcc', '-o', binary_file, output_file])
+    result = subprocess.run(['gcc', '-o', binary_file, output_file])
+
+if result.returncode != 0:
+    exit(1)
 
 command = ['java', '-classpath', classpath, "Main"
            ] if ext == '.java' else [binary_file]
@@ -95,19 +98,20 @@ def test_command(command, test_file):
         print("Test case `" + test_file_name + "` passed")
         return True
     else:
-        print("Test case `" + test_file_name + "` failed with input:")
+        print("\033[1mTest case `" + test_file_name +
+              "` failed with input:\033[0m")
         with open(test_file_path) as f:
             input_data = f.read().strip()
         print("::START INPUT::")
         for line in input_data.split('\n'):
             print(line)
         print("::END INPUT::")
-        print("...with output:")
+        print("\033[1m...with output:\033[0m")
         print("::START OUTPUT::")
         for line in answer.split('\n'):
             print(line)
         print("::END OUTPUT::")
-        print("when correct output was:")
+        print("\033[1mwhen correct output was:\033[0m")
         print("::START OUTPUT::")
         for line in correct_answer.split('\n'):
             print(line)
@@ -125,7 +129,7 @@ if test_path is None:
         f.write(txt)
     result = test_command(command, sys.stdin)
     answer = result.stdout.decode('utf-8').strip()
-    print("Program had output:")
+    print("\033[1mProgram had output:\033[0m")
     print("::START OUTPUT::")
     for line in answer.split('\n'):
         print(line)
