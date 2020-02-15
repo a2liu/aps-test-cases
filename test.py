@@ -156,7 +156,7 @@ elif os.path.isdir(test_path):
     for file in os.listdir(test_path):
         if file.endswith('ans') or file.startswith('.'):
             continue
-        print("Found input file: " + file)
+        info("Found input file: " + file)
 
         to_add = passing if test_command(command, os.path.join(
             test_path, file)) else failing
