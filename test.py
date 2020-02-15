@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3
 import os, sys, subprocess, io
 
 
@@ -6,8 +6,21 @@ def debug(*value):
     print("[DEBUG]:", *value)
 
 
+if '--help' in sys.argv or '-h' in sys.argv:
+    print("""
+Hi! This is the test runner for APS. The arguemnts are:
+
+./test.py [--debug] [--help] [-h] <source_file> <test_path>
+  source_file   The source file
+  test_path     OPTIONAL. The path for test data. It can be a folder or file.
+  --help,-h     OPTIONAL. Show this message.
+  --debug       OPTIONAL. Show debug information.
+""")
+    quit(0)
+
 if '--debug' in sys.argv:
     info = debug
+    sys.argv.remove('--debug')
 else:
     info = lambda *x: None
 
@@ -102,10 +115,11 @@ def test_command(command, test_file):
 info("Command is: " + str(command))
 if test_path is None:
     print("Input file: stdin")
-    print("Use Ctrl-D to end input")
+    print("Use Ctrl-D Ctrl-D to end input")
     temp_path = os.path.join(project_dir, 'bin', ".tmp")
+    txt = sys.stdin.read()
     with open(temp_path, 'w') as f:
-        f.write(sys.stdin.read())
+        f.write(txt)
     result = test_command(command, sys.stdin)
     answer = result.stdout.decode('utf-8')
     print("Program had output:")
@@ -113,12 +127,12 @@ if test_path is None:
     for line in answer.split('\n'):
         print(line)
     print("::END OUTPUT::")
-    user_input = prompt(
-        "Would you like to save this run as a test case? [y/n]")
+    user_input = input("Would you like to save this run as a test case? [y/n]")
     if user_input.startswith('y'):
-        test_case_path = prompt("Where should this run be stored?")
-        print("Please store the answer to this test case at '" +
-              test_case_path + '-ans' + "'")
+        test_case_path = input("Where should this run be stored?")
+        print(
+            "Please store the answer to this test case at the following path:\n"
+            + test_case_path + '-ans')
 
 elif os.path.isdir(test_path):
     print("Input folder: " + test_path)
