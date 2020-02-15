@@ -75,6 +75,23 @@ command = ['java', '-classpath', classpath, "Main"
            ] if ext == '.java' else [binary_file]
 
 
+def print_value_red(value, title=None):
+    if title is not None:
+        print("\033[1m" + title + "\033[0m\033[31m")
+    for line in value.split('\n'):
+        print(line)
+    print("\033[0m", end='')
+
+
+def print_value(value, title=None):
+    if title is not None:
+        print("\033[1m" + title + "\033[0m")
+    print("::START::")
+    for line in value.split('\n'):
+        print(line)
+    print("::END::")
+
+
 def test_command(command, test_file):
     was_str = isinstance(test_file, str)
     if was_str:
@@ -91,31 +108,22 @@ def test_command(command, test_file):
     test_file_name = os.path.basename(test_file_path)
 
     answer = result.stdout.decode('utf-8').strip()
+    err = result.stderr.decode('utf-8').strip()
     with open(test_file_path + '-ans') as f:
         correct_answer = f.read().strip()
+
+    print_value_red(err, "stderr:")
 
     if answer == correct_answer:
         print("Test case `" + test_file_name + "` passed")
         return True
     else:
-        print("\033[1mTest case `" + test_file_name +
-              "` failed with input:\033[0m")
         with open(test_file_path) as f:
             input_data = f.read().strip()
-        print("::START INPUT::")
-        for line in input_data.split('\n'):
-            print(line)
-        print("::END INPUT::")
-        print("\033[1m...with output:\033[0m")
-        print("::START OUTPUT::")
-        for line in answer.split('\n'):
-            print(line)
-        print("::END OUTPUT::")
-        print("\033[1mwhen correct output was:\033[0m")
-        print("::START OUTPUT::")
-        for line in correct_answer.split('\n'):
-            print(line)
-        print("::END OUTPUT::")
+        print_value(input_data,
+                    title=f"Test case `{ test_file_name }` failed with input:")
+        print_value(answer, title=f"...with output:")
+        print_value(correct_answer, title=f"when correct output was:")
         return False
 
 
@@ -127,13 +135,12 @@ if test_path is None:
     txt = sys.stdin.read()
     with open(temp_path, 'w') as f:
         f.write(txt)
-    result = test_command(command, sys.stdin)
+    with open(temp_path) as f:
+        result = test_command(command, f)
     answer = result.stdout.decode('utf-8').strip()
-    print("\033[1mProgram had output:\033[0m")
-    print("::START OUTPUT::")
-    for line in answer.split('\n'):
-        print(line)
-    print("::END OUTPUT::")
+    err = result.stderr.decode('utf-8').strip()
+    print_value_red(err, "stderr:")
+    print_value(answer, title=f"Program had output:")
     user_input = input("Would you like to save this run as a test case? [y/n]")
     if user_input.startswith('y'):
         test_case_path = input("Where should this run be stored?")
