@@ -97,10 +97,10 @@ def test_command(command, test_file):
     else:
         print("Test case `" + test_file_name + "` failed with input:")
         with open(test_file_path) as f:
-            input_data = f.read()
+            input_data = f.read().strip()
         print("::START INPUT::")
         for line in input_data.split('\n'):
-            info(line)
+            print(line)
         print("::END INPUT::")
         print("...with output:")
         print("::START OUTPUT::")
@@ -110,7 +110,7 @@ def test_command(command, test_file):
         print("when correct output was:")
         print("::START OUTPUT::")
         for line in correct_answer.split('\n'):
-            info(line)
+            print(line)
         print("::END OUTPUT::")
         return False
 
@@ -144,14 +144,13 @@ elif os.path.isdir(test_path):
     info()
 
     for file in os.listdir(test_path):
-        if file.endswith('ans'):
+        if file.endswith('ans') or file.startswith('.'):
             continue
-        info("Found input file: " + file)
+        print("Found input file: " + file)
 
         to_add = passing if test_command(command, os.path.join(
             test_path, file)) else failing
         to_add.append(file)
-        info()
 
     print("Passed test cases: " + str(passing))
     print("Failed test cases: " + str(failing))
