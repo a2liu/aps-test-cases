@@ -1,14 +1,19 @@
 #!/bin/python3
 import os, sys, subprocess, io
 
+
+def debug(*value):
+    print("[DEBUG]:", *value)
+
+
+if '--debug' in sys.argv:
+    info = debug
+else:
+    info = lambda *x: None
+
 if len(sys.argv) <= 1:
     print("Need to provide an input file!")
     quit(1)
-
-
-def info(*value):
-    print("[INFO]:", *value)
-
 
 project_dir = os.path.dirname(os.path.realpath(__file__))
 file_path, ext = os.path.splitext(os.path.realpath(sys.argv[1]))
@@ -61,7 +66,7 @@ def test_command(command, test_file):
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
     if not was_str:
-        return True
+        return result
 
     test_file.close()
     test_file_name = os.path.basename(test_file_path)
@@ -71,35 +76,52 @@ def test_command(command, test_file):
         correct_answer = f.read()
 
     if answer == correct_answer:
-        info("Test case " + test_file_name + " passed")
+        print("Test case `" + test_file_name + "` passed")
         return True
     else:
-        info("Test case `" + test_file_name + "` failed with input:")
+        print("Test case `" + test_file_name + "` failed with input:")
         with open(test_file_path) as f:
             input_data = f.read()
-        info("::START INPUT::")
+        print("::START INPUT::")
         for line in input_data.split('\n'):
             info(line)
-        info("::END INPUT::")
-        info("...with output:")
-        info("::START OUTPUT::")
+        print("::END INPUT::")
+        print("...with output:")
+        print("::START OUTPUT::")
         for line in answer.split('\n'):
-            info(line)
-        info("::END OUTPUT::")
-        info("when correct output was:")
-        info("::START OUTPUT::")
+            print(line)
+        print("::END OUTPUT::")
+        print("when correct output was:")
+        print("::START OUTPUT::")
         for line in correct_answer.split('\n'):
             info(line)
-        info("::END OUTPUT::")
+        print("::END OUTPUT::")
         return False
 
 
 info("Command is: " + str(command))
 if test_path is None:
-    info("Input file: stdin")
-    subprocess.run(command, stdin=sys.stdin, stdout=sys.stdout)
+    print("Input file: stdin")
+    print("Use Ctrl-D to end input")
+    temp_path = os.path.join(project_dir, 'bin', ".tmp")
+    with open(temp_path, 'w') as f:
+        f.write(sys.stdin.read())
+    result = test_command(command, sys.stdin)
+    answer = result.stdout.decode('utf-8')
+    print("Program had output:")
+    print("::START OUTPUT::")
+    for line in answer.split('\n'):
+        print(line)
+    print("::END OUTPUT::")
+    user_input = prompt(
+        "Would you like to save this run as a test case? [y/n]")
+    if user_input.startswith('y'):
+        test_case_path = prompt("Where should this run be stored?")
+        print("Please store the answer to this test case at '" +
+              test_case_path + '-ans' + "'")
+
 elif os.path.isdir(test_path):
-    info("Input folder: " + test_path)
+    print("Input folder: " + test_path)
     passing = []
     failing = []
     info()
@@ -114,9 +136,9 @@ elif os.path.isdir(test_path):
         to_add.append(file)
         info()
 
-    info("Passed test cases: " + str(passing))
-    info("Failed test cases: " + str(failing))
+    print("Passed test cases: " + str(passing))
+    print("Failed test cases: " + str(failing))
 
 else:
-    info("Input file: " + test_path)
+    print("Input file: " + test_path)
     test_command(command, os.path.join(test_path))
