@@ -15,6 +15,9 @@ Hi! This is the test runner for APS. The arguemnts are:
   test_path     OPTIONAL. The path for test data. It can be a folder or file.
   --help,-h     OPTIONAL. Show this message.
   --debug       OPTIONAL. Show debug information.
+
+Please note that this program can't test for presentation errors! However, it
+will tell you what the output should have been, so that should help.
 """)
     quit(0)
 
@@ -84,9 +87,9 @@ def test_command(command, test_file):
     test_file.close()
     test_file_name = os.path.basename(test_file_path)
 
-    answer = result.stdout.decode('utf-8')
+    answer = result.stdout.decode('utf-8').strip()
     with open(test_file_path + '-ans') as f:
-        correct_answer = f.read()
+        correct_answer = f.read().strip()
 
     if answer == correct_answer:
         print("Test case `" + test_file_name + "` passed")
@@ -121,7 +124,7 @@ if test_path is None:
     with open(temp_path, 'w') as f:
         f.write(txt)
     result = test_command(command, sys.stdin)
-    answer = result.stdout.decode('utf-8')
+    answer = result.stdout.decode('utf-8').strip()
     print("Program had output:")
     print("::START OUTPUT::")
     for line in answer.split('\n'):
