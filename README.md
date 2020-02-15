@@ -11,8 +11,10 @@ your code into this repository in the `bin` directory.
 
 #### Examples
 
-If your file is at `.home/aliu/code/aps/hw3/Polish.java`
+If your source file is at `/home/aliu/code/aps/hw3/Polish.java`
 
 ```
-python3
+python3 test.py /home/aliu/code/aps/hw3/Polish.java
 ```
+
+will compile the program and run it using standard input.
