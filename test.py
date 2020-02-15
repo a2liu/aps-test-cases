@@ -112,8 +112,6 @@ def test_command(command, test_file):
     with open(test_file_path + '-ans') as f:
         correct_answer = f.read().strip()
 
-    print_value_red(err, "stderr:")
-
     if answer == correct_answer:
         print("Test case `" + test_file_name + "` passed")
         return True
@@ -124,6 +122,7 @@ def test_command(command, test_file):
                     title=f"Test case `{ test_file_name }` failed with input:")
         print_value(answer, title=f"...with output:")
         print_value(correct_answer, title=f"when correct output was:")
+        print_value_red(err, "stderr:")
         return False
 
 
@@ -139,8 +138,8 @@ if test_path is None:
         result = test_command(command, f)
     answer = result.stdout.decode('utf-8').strip()
     err = result.stderr.decode('utf-8').strip()
-    print_value_red(err, "stderr:")
     print_value(answer, title=f"Program had output:")
+    print_value_red(err, "and stderr:")
     user_input = input("Would you like to save this run as a test case? [y/n]")
     if user_input.startswith('y'):
         test_case_path = input("Where should this run be stored?")
