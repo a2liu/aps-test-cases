@@ -11,7 +11,7 @@ if '--help' in sys.argv or '-h' in sys.argv:
 Hi! This is the test runner for APS. The arguemnts are:
 
 ./test.py [--debug] [--help] [-h] <source_file> <test_path>
-  source_file   The source file
+  source_file   The source file.
   test_path     OPTIONAL. The path for test data. It can be a folder or file.
   --help,-h     OPTIONAL. Show this message.
   --debug       OPTIONAL. Show debug information.
