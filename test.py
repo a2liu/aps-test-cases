@@ -129,7 +129,7 @@ def test_command(command, test_file):
 info("Command is: " + str(command))
 if test_path is None:
     print("Input file: stdin")
-    print("Use Ctrl-D Ctrl-D to end input")
+    print("Use Ctrl-D to end input")
     temp_path = os.path.join(project_dir, 'bin', ".tmp")
     txt = sys.stdin.read()
     with open(temp_path, 'w') as f:
