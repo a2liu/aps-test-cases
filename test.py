@@ -122,7 +122,7 @@ def test_command(command, test_file):
                     title=f"Test case `{ test_file_name }` failed with input:")
         print_value(answer, title=f"...with output:")
         print_value(correct_answer, title=f"when correct output was:")
-        print_value_red(err, "stderr:")
+        print_value_red(err, title="stderr:")
         return False
 
 
