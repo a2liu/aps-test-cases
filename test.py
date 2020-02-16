@@ -8,11 +8,13 @@ def debug(*value):
 
 if '--help' in sys.argv or '-h' in sys.argv:
     print("""
-Hi! This is the test runner for APS. The arguemnts are:
+Hi! This is a test runner for APS. The arguemnts are:
 
 ./test.py [--debug] [--help] [-h] <source_file> <test_path>
   source_file   The source file.
   test_path     OPTIONAL. The path for test data. It can be a folder or file.
+                If a test case file is named `test-case-1`, this script will look
+                for a file in the same folder with the name `test-case-1-ans`
   --help,-h     OPTIONAL. Show this message.
   --debug       OPTIONAL. Show debug information.
 
@@ -45,8 +47,10 @@ info("Project directory: " + project_dir)
 info(" Output directory: " + bin_dir)
 info("  Output basename: " + output_file_basename)
 info("      Output file: " + output_file)
+
 info("        Classpath: " + classpath) if ext == '.java' else \
 info("      Binary file: " + binary_file)
+
 info("        File path: " + file_path + ext)
 info("        File name: " + filename)
 info("        Extension: " + ext)
@@ -73,14 +77,12 @@ elif ext == ".cpp":
 elif ext == ".c":
     result = subprocess.run(['gcc', '-o', binary_file, output_file])
 
-with open(output_file) as f:
-    txt = f.read()
-
 if result.returncode != 0:
     exit(1)
 
 command = ['java', '-classpath', classpath, "Main"
            ] if ext == '.java' else [binary_file]
+info("Command is: " + str(command))
 
 
 def print_value_red(value, title=None):
@@ -101,22 +103,27 @@ def print_value(value, title=None):
 
 
 def test_command(command, test_file):
-    was_str = isinstance(test_file, str)
-    if was_str:
+    test_file_path = test_file
+    if isinstance(test_file, str):
         test_file_path = test_file
         test_file = open(test_file)
+
     result = subprocess.run(command,
                             stdin=test_file,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
-    if not was_str:
-        return result
-
     test_file.close()
-    test_file_name = os.path.basename(test_file_path)
-
     answer = result.stdout.decode('utf-8').strip()
     err = result.stderr.decode('utf-8').strip()
+
+    if not os.path.exists(test_file_path + '-ans'):
+        info("Couldn't find answer file")
+        print_value(answer, title=f"Program had output:")
+        if err.strip() != "":
+            print_value_red(err, title="with stderr:")
+        return
+
+    test_file_name = os.path.basename(test_file_path)
     with open(test_file_path + '-ans') as f:
         correct_answer = f.read().strip()
 
@@ -130,11 +137,11 @@ def test_command(command, test_file):
                     title=f"Test case `{ test_file_name }` failed with input:")
         print_value(answer, title=f"...with output:")
         print_value(correct_answer, title=f"when correct output was:")
-        print_value_red(err, title="stderr:")
+        if err.strip() != "":
+            print_value_red(err, title="with stderr:")
         return False
 
 
-info("Command is: " + str(command))
 if test_path is None:
     print("Input file: stdin")
     print("Use Ctrl-D to end input")
@@ -143,14 +150,10 @@ if test_path is None:
     with open(temp_path, 'w') as f:
         f.write(txt)
     with open(temp_path) as f:
-        result = test_command(command, f)
-    answer = result.stdout.decode('utf-8').strip()
-    err = result.stderr.decode('utf-8').strip()
-    print_value(answer, title=f"Program had output:")
-    print_value_red(err, "and stderr:")
-    user_input = input("Would you like to save this run as a test case? [y/n]")
+        test_command(command, f)
+    user_input = input("Save this run as a test case? [y/n] ")
     if user_input.startswith('y'):
-        test_case_path = input("Where should this run be stored?")
+        test_case_path = input("Where should the test case be stored?")
         print(
             "Please store the answer to this test case at the following path:\n"
             + test_case_path + '-ans')
@@ -166,9 +169,10 @@ elif os.path.isdir(test_path):
             continue
         info("Found input file: " + file)
 
-        to_add = passing if test_command(command, os.path.join(
-            test_path, file)) else failing
-        to_add.append(file)
+        if test_command(command, os.path.join(test_path, file)):
+            passing.append(file)
+        else:
+            failing.append(file)
 
     print("Passed test cases: " + str(passing))
     print("Failed test cases: " + str(failing))
