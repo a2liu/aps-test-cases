@@ -10,7 +10,7 @@ if '--help' in sys.argv or '-h' in sys.argv:
     print("""
 Hi! This is a test runner for APS. The arguemnts are:
 
-./test.py [--debug] [--help] [-h] <source_file> <test_path>
+python3 test.py [--debug] [--help] [-h] <source_file> <test_path>
   source_file   The source file.
   test_path     OPTIONAL. The path for test data. It can be a folder or file.
                 If a test case file is named `test-case-1`, this script will look
