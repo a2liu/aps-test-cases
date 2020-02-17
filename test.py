@@ -29,6 +29,12 @@ if '--debug' in sys.argv:
 else:
     info = lambda *x: None
 
+assert_correct = False
+if '--assert' in sys.argv:
+    print("In assertion mode. Test case answers will be written to.")
+    sys.argv.remove('--assert')
+    assert_correct = True
+
 if len(sys.argv) <= 1:
     print("Need to provide an input file!")
     quit(1)
@@ -116,8 +122,14 @@ def test_command(command, test_file):
     answer = result.stdout.decode('utf-8').strip()
     err = result.stderr.decode('utf-8').strip()
 
-    if not os.path.exists(test_file_path + '-ans'):
-        info("Couldn't find answer file")
+    if not os.path.exists(test_file_path + '-ans') or assert_correct:
+        if assert_correct:
+            with open(test_file_path + '-ans', 'w') as f:
+                f.write(answer.strip())
+                f.write('\n')
+        else:
+            info("Couldn't find answer file")
+
         print_value(answer, title=f"Program had output:")
         if err.strip() != "":
             print_value_red(err, title="with stderr:")
@@ -165,7 +177,8 @@ elif os.path.isdir(test_path):
     info()
 
     for file in os.listdir(test_path):
-        if file.endswith('ans') or file.startswith('.'):
+        if file.endswith('ans') or file.startswith('.') or file.endswith(
+                '.py'):
             continue
         info("Found input file: " + file)
 
