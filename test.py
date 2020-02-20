@@ -35,6 +35,11 @@ if '--assert' in sys.argv:
     sys.argv.remove('--assert')
     assert_correct = True
 
+just_compile = False
+if '--compile' in sys.argv:
+    sys.argv.remove('--compile')
+    just_compile = True
+
 if len(sys.argv) <= 1:
     print("Need to provide an input file!")
     quit(1)
@@ -85,6 +90,8 @@ elif ext == ".c":
 
 if result.returncode != 0:
     exit(1)
+if just_compile:
+    exit(0)
 
 command = ['java', '-classpath', classpath, "Main"
            ] if ext == '.java' else [binary_file]
