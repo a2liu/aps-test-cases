@@ -122,7 +122,9 @@ def test_command(command, test_file):
     answer = result.stdout.decode('utf-8').strip()
     err = result.stderr.decode('utf-8').strip()
 
-    if not os.path.exists(test_file_path + '-ans') or assert_correct:
+    if not isinstance(test_file_path,
+                      str) or not os.path.exists(test_file_path +
+                                                 '-ans') or assert_correct:
         if assert_correct:
             with open(test_file_path + '-ans', 'w') as f:
                 f.write(answer.strip())
@@ -133,7 +135,7 @@ def test_command(command, test_file):
         print_value(answer, title=f"Program had output:")
         if err.strip() != "":
             print_value_red(err, title="with stderr:")
-        return
+        return result.returncode == 0
 
     test_file_name = os.path.basename(test_file_path)
     with open(test_file_path + '-ans') as f:
@@ -162,7 +164,9 @@ if test_path is None:
     with open(temp_path, 'w') as f:
         f.write(txt)
     with open(temp_path) as f:
-        test_command(command, f)
+        result = test_command(command, f)
+    if not result:
+        exit(1)
     user_input = input("Save this run as a test case? [y/n] ")
     if user_input.startswith('y'):
         test_case_path = input("Where should the test case be stored?")
