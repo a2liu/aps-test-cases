@@ -115,34 +115,30 @@ def print_value(value, title=None):
     print("::END::")
 
 
-def test_command(command, test_file):
-    test_file_path = test_file
-    if isinstance(test_file, str):
-        test_file_path = test_file
-        test_file = open(test_file)
-
+def run_command(command, test_file):
     result = subprocess.run(command,
                             stdin=test_file,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
-    test_file.close()
-    answer = result.stdout.decode('utf-8').strip()
-    err = result.stderr.decode('utf-8').strip()
+    return result.stdout.decode('utf-8').strip(), result.stderr.decode(
+        'utf-8').strip(), (result.returncode == 0)
 
-    if not isinstance(test_file_path,
-                      str) or not os.path.exists(test_file_path +
-                                                 '-ans') or assert_correct:
-        if assert_correct:
-            with open(test_file_path + '-ans', 'w') as f:
-                f.write(answer.strip())
-                f.write('\n')
-        else:
+
+def test_command(command, test_file_path):
+    with open(test_file_path) as f:
+        answer, err, success = run_command(command, f)
+
+    if not os.path.exists(test_file_path + '-ans') or assert_correct:
+        if not assert_correct:
             info("Couldn't find answer file")
+        with open(test_file_path + '-ans', 'w') as f:
+            f.write(answer.strip())
+            f.write('\n')
 
         print_value(answer, title=f"Program had output:")
         if err.strip() != "":
             print_value_red(err, title="with stderr:")
-        return result.returncode == 0
+        return success
 
     test_file_name = os.path.basename(test_file_path)
     with open(test_file_path + '-ans') as f:
@@ -171,15 +167,31 @@ if test_path is None:
     with open(temp_path, 'w') as f:
         f.write(txt)
     with open(temp_path) as f:
-        result = test_command(command, f)
-    if not result:
+        answer, err, success = run_command(command, f)
+
+    print_value(answer, title=f"Program had output:")
+    if err.strip() != "":
+        print_value_red(err, title="with stderr:")
+    if not success:
         exit(1)
+
     user_input = input("Save this run as a test case? [y/n] ")
-    if user_input.startswith('y'):
-        test_case_path = input("Where should the test case be stored?")
-        print(
-            "Please store the answer to this test case at the following path:\n"
-            + test_case_path + '-ans')
+    if not user_input.startswith('y'):
+        exit(0)
+    test_case_path = input("Where should the test case be stored? ")
+
+    try:
+        os.makedirs(os.path.dirname(test_case_path))
+    except:
+        pass
+
+    with open(test_case_path, 'w') as f:
+        f.write(txt)
+    with open(test_case_path + '-ans', 'w') as f:
+        f.write(answer.strip())
+        f.write('\n')
+
+    print(f"Test case answer was stored at: {test_case_path}-ans")
 
 elif os.path.isdir(test_path):
     print("Input folder: " + test_path)
