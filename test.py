@@ -93,6 +93,8 @@ if result.returncode != 0:
 if just_compile:
     exit(0)
 
+print("Code compiled.")
+
 command = ['java', '-classpath', classpath, "Main"
            ] if ext == '.java' else [binary_file]
 info("Command is: " + str(command))
@@ -132,7 +134,7 @@ def test_command(command, test_file_path):
         if not assert_correct:
             info("Couldn't find answer file")
         with open(test_file_path + '-ans', 'w') as f:
-            f.write(answer.strip())
+            f.write(answer)
             f.write('\n')
 
         print_value(answer, title=f"Program had output:")
@@ -152,7 +154,7 @@ def test_command(command, test_file_path):
             input_data = f.read().strip()
         print_value(input_data,
                     title=f"Test case `{ test_file_name }` failed with input:")
-        print_value(answer, title=f"...with output:")
+        print_value(answer, title=f"with output:")
         print_value(correct_answer, title=f"when correct output was:")
         if err.strip() != "":
             print_value_red(err, title="with stderr:")
