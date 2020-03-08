@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 #define debug(expr)                                                            \
