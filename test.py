@@ -130,19 +130,21 @@ def test_command(command, test_file_path):
     with open(test_file_path) as f:
         answer, err, success = run_command(command, f)
 
+    test_file_name = os.path.basename(test_file_path)
+
     if not os.path.exists(test_file_path + '-ans') or assert_correct:
         if not assert_correct:
             info("Couldn't find answer file")
-        with open(test_file_path + '-ans', 'w') as f:
-            f.write(answer)
-            f.write('\n')
+        else:
+            with open(test_file_path + '-ans', 'w') as f:
+                f.write(answer)
+                f.write('\n')
 
-        print_value(answer, title=f"Program had output:")
+        print_value(answer, title=f"For `{test_file_name}` program had output:")
         if err.strip() != "":
             print_value_red(err, title="with stderr:")
         return success
 
-    test_file_name = os.path.basename(test_file_path)
     with open(test_file_path + '-ans') as f:
         correct_answer = f.read().strip()
 
