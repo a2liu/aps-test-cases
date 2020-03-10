@@ -187,6 +187,9 @@ if test_path is None:
     except:
         pass
 
+    if os.path.exists(test_case_path):
+        print("Test case already exists!")
+
     with open(test_case_path, 'w') as f:
         f.write(txt)
     with open(test_case_path + '-ans', 'w') as f:
