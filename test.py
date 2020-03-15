@@ -80,7 +80,7 @@ with open(output_file, 'w') as f:
 with open(os.path.join(bin_dir, output_file_basename), 'w') as f:
     f.write(txt)
 
-print("Compiling code...")
+print("Compiling code...", end='')
 if ext == ".java":
     result = subprocess.run(['javac', output_file, '-d', classpath])
 elif ext == ".cpp":
@@ -89,11 +89,13 @@ elif ext == ".c":
     result = subprocess.run(['gcc', '-o', binary_file, output_file])
 
 if result.returncode != 0:
+    print()
     exit(1)
+
+print(" Done.")
+
 if just_compile:
     exit(0)
-
-print("Code compiled.")
 
 command = ['java', '-classpath', classpath, "Main"
            ] if ext == '.java' else [binary_file]
@@ -130,19 +132,22 @@ def test_command(command, test_file_path):
     with open(test_file_path) as f:
         answer, err, success = run_command(command, f)
 
+    test_file_name = os.path.basename(test_file_path)
+
     if not os.path.exists(test_file_path + '-ans') or assert_correct:
         if not assert_correct:
             info("Couldn't find answer file")
-        with open(test_file_path + '-ans', 'w') as f:
-            f.write(answer)
-            f.write('\n')
+        else:
+            with open(test_file_path + '-ans', 'w') as f:
+                f.write(answer)
+                f.write('\n')
 
-        print_value(answer, title=f"Program had output:")
+        print_value(answer,
+                    title=f"For `{test_file_name}` program had output:")
         if err.strip() != "":
             print_value_red(err, title="with stderr:")
         return success
 
-    test_file_name = os.path.basename(test_file_path)
     with open(test_file_path + '-ans') as f:
         correct_answer = f.read().strip()
 
@@ -186,6 +191,9 @@ if test_path is None:
         os.makedirs(os.path.dirname(test_case_path))
     except:
         pass
+
+    if os.path.exists(test_case_path):
+        print("Test case already exists!")
 
     with open(test_case_path, 'w') as f:
         f.write(txt)
