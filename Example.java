@@ -4,19 +4,19 @@ import java.util.Scanner;
 
 /*
  *
+ * Tips:
+ * 1. Use TreeSet when you need a min-max heap
+ * 2. Use TreeMap when you need a min-max heap with values or an ordered map
+ * 3. You can multiply numbers by -1 to turn a Min heap inot a max heap
  */
 class Main {
 
   static int[] disjointSets;
-  static void initSets(int n) {
-    for (int i = 0; i < n; i++)
-      disjointSets[i] = -1;
-  }
+
   static int unionFind(int value) {
-    if (disjointSets[value] < 0)
-      return value;
-    else
-      return disjointSets[value] = unionFind(disjointSets[value]);
+    return disjointSets[value] < 0
+        ? value
+        : (disjointSets[value] = unionFind(disjointSets[value]));
   }
 
   static int mergeSets(int l, int r) {
