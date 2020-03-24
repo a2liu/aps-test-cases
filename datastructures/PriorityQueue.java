@@ -102,7 +102,5 @@ class Main {
     System.out.println(PriorityQueue.pop(q));
     System.out.println(PriorityQueue.pop(q));
     System.out.println(PriorityQueue.pop(q));
-
-    throw new RuntimeException();
   }
 }

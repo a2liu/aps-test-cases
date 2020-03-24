@@ -111,7 +111,5 @@ class Main {
     System.out.println(PriorityQueueComparator.pop(q, c));
     System.out.println(PriorityQueueComparator.pop(q, c));
     System.out.println(PriorityQueueComparator.pop(q, c));
-
-    throw new RuntimeException();
   }
 }
