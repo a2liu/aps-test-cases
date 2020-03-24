@@ -94,6 +94,8 @@ class PriorityQueueComparator {
 class Main {
   public static void main(String[] args) {
     int[] q = PriorityQueueComparator.newQueue(1);
+
+    // This comparator turns the min heap into a max heap
     PriorityQueueComparator.Comparator c = (l, r) -> l > r;
 
     // You have to reassign each time after pushing
