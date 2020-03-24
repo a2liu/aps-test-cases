@@ -93,12 +93,13 @@ class PriorityQueueComparator {
 
 class Main {
   public static void main(String[] args) {
-    int[] q = PriorityQueueComparator.newQueue(1);
+    int[] q = PriorityQueueComparator.newQueue(0);
 
     // This comparator turns the min heap into a max heap
     PriorityQueueComparator.Comparator c = (l, r) -> l > r;
 
-    // You have to reassign each time after pushing
+    // You have to reassign each time after pushing; if you know you won't need
+    // to reallocate then this isn't necessary
     q = PriorityQueueComparator.push(q, -1, c);
     q = PriorityQueueComparator.push(q, 12, c);
     q = PriorityQueueComparator.push(q, 32, c);
