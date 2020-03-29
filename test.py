@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, sys, subprocess, io
+import os, sys, subprocess, io, datetime
 
 
 def debug(*value):
@@ -20,7 +20,7 @@ python3 test.py [--debug] [--help] [-h] <source_file> <test_path>
 
 Please note that this program can't test for presentation errors! However, it
 will tell you what the output should have been, so that should help.
-""")
+    """)
     quit(0)
 
 if '--debug' in sys.argv:
@@ -60,7 +60,7 @@ info("  Output basename: " + output_file_basename)
 info("      Output file: " + output_file)
 
 info("        Classpath: " + classpath) if ext == '.java' else \
-info("      Binary file: " + binary_file)
+    info("      Binary file: " + binary_file)
 
 info("        File path: " + file_path + ext)
 info("        File name: " + filename)
@@ -113,6 +113,8 @@ def print_value_red(value, title=None):
 def print_value(value, title=None):
     if title is not None:
         print("\033[1m" + title + "\033[0m")
+    if value is None:
+        return
     print("::START::")
     for line in value.split('\n'):
         print(line)
@@ -120,17 +122,20 @@ def print_value(value, title=None):
 
 
 def run_command(command, test_file):
+    start = datetime.datetime.now()
     result = subprocess.run(command,
                             stdin=test_file,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
+    end = datetime.datetime.now()
     return result.stdout.decode('utf-8').strip(), result.stderr.decode(
-        'utf-8').strip(), (result.returncode == 0)
+        'utf-8').strip(), (
+            result.returncode == 0), (end - start).microseconds / 1000000
 
 
 def test_command(command, test_file_path):
     with open(test_file_path) as f:
-        answer, err, success = run_command(command, f)
+        answer, err, success, time_elapsed = run_command(command, f)
 
     test_file_name = os.path.basename(test_file_path)
 
@@ -146,13 +151,16 @@ def test_command(command, test_file_path):
                     title=f"For `{test_file_name}` program had output:")
         if err.strip() != "":
             print_value_red(err, title="with stderr:")
+        print_value(None,
+                    title="...and ran in " + str(time_elapsed) + " seconds\n")
         return success
 
     with open(test_file_path + '-ans') as f:
         correct_answer = f.read().strip()
 
     if answer == correct_answer:
-        print("Test case `" + test_file_name + "` passed")
+        print("Test case `" + test_file_name + "` passed in " +
+              str(time_elapsed) + " seconds")
         return True
     else:
         with open(test_file_path) as f:
@@ -174,11 +182,12 @@ if test_path is None:
     with open(temp_path, 'w') as f:
         f.write(txt)
     with open(temp_path) as f:
-        answer, err, success = run_command(command, f)
+        answer, err, success, time_elapsed = run_command(command, f)
 
     print_value(answer, title=f"Program had output:")
     if err.strip() != "":
         print_value_red(err, title="with stderr:")
+    print_value(None, title="...and ran in " + str(time_elapsed) + " seconds")
     if not success:
         exit(1)
 
@@ -210,8 +219,7 @@ elif os.path.isdir(test_path):
     info()
 
     for file in os.listdir(test_path):
-        if file.endswith('ans') or file.startswith('.') or file.endswith(
-                '.py'):
+        if file.endswith('ans') or file.startswith('.') or '.' in file:
             continue
         info("Found input file: " + file)
 
@@ -223,6 +231,6 @@ elif os.path.isdir(test_path):
     print("Passed test cases: " + str(passing))
     print("Failed test cases: " + str(failing))
 
-else:
+else:  # testing a single file
     print("Input file: " + test_path)
     test_command(command, os.path.join(test_path))
