@@ -19,4 +19,12 @@ If your source file is at `/home/aliu/code/aps/hw3/Polish.java`
 python3 test.py /home/aliu/code/aps/hw3/Polish.java
 ```
 
-will compile the program and run it using standard input.
+will compile the program and run it using standard input. You can compile and run
+the program using a folder of test cases by doing:
+
+```
+python3 test.py /home/aliu/code/aps/hw3/Polish.java hw3/polish
+```
+
+This will run all the test cases in the folder `polish` and check them against
+given answers in the folder.
