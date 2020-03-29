@@ -1,46 +1,54 @@
 // Merge sort, also counts number of inversions during sorting.
 class MergeSort {
-
-  static int sort(int[] arr) {
-    int[] scratch = new int[arr.length];
+  static long sort(int[] arr) {
+    int[] scratch = new int[arr.length / 2 + 1];
     return mergeSort(arr, scratch, 0, arr.length);
   }
 
-  static int mergeSort(int[] arr, int[] scratch, int begin, int end) {
-    if (begin == end || begin == end - 1) {
-      return 0;
+  static long mergeSort(int[] arr, int[] scratch, int begin, int end) {
+    if (begin >= end - 256) {
+      long inversions = 0;
+      for (int i = begin + 1; i < end; ++i) {
+        int key = arr[i], j = i;
+
+        for (; j > begin && arr[j - 1] > key; j--)
+          arr[j] = arr[j - 1];
+
+        arr[j] = key;
+        inversions += i - j;
+      }
+
+      return inversions;
     }
 
-    int midwayPoint = (end + begin) / 2;
-    int inversions = mergeSort(arr, scratch, begin, midwayPoint);
+    int midwayPoint = (end + begin) >> 1;
+    long inversions = mergeSort(arr, scratch, begin, midwayPoint);
     inversions += mergeSort(arr, scratch, midwayPoint, end);
 
-    for (int i = begin; i < end; i++) {
-      scratch[i] = arr[i];
+    for (int i = begin; i < midwayPoint; i++) {
+      scratch[i - begin] = arr[i];
     }
 
     // merge
-    for (int i = begin, leftIdx = begin, rightIdx = midwayPoint; i < end; i++) {
-      if (leftIdx == midwayPoint) {
-        arr[i] = scratch[rightIdx++];
-        continue;
-      }
-
-      if (rightIdx == end) {
-        arr[i] = scratch[leftIdx++];
-        continue;
-      }
-
-      int left = scratch[leftIdx], right = scratch[rightIdx];
+    int scratchEnd = midwayPoint - begin;
+    int i = begin, leftIdx = 0, rightIdx = midwayPoint;
+    for (; leftIdx != scratchEnd && rightIdx != end; i++) {
+      int left = scratch[leftIdx], right = arr[rightIdx];
       if (right < left) {
         arr[i] = right;
         rightIdx++;
-        inversions += midwayPoint - leftIdx;
+        inversions += midwayPoint - leftIdx - begin;
       } else {
         arr[i] = left;
         leftIdx++;
       }
     }
+
+    for (; leftIdx != scratchEnd; leftIdx++, i++)
+      arr[i] = scratch[leftIdx];
+    for (; rightIdx != end; rightIdx++, i++)
+      arr[i] = arr[rightIdx];
+
     return inversions;
   }
 }

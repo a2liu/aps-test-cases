@@ -116,8 +116,19 @@ def print_value(value, title=None):
     if value is None:
         return
     print("::START::")
-    for line in value.split('\n'):
-        print(line)
+    lines = value.split('\n')
+    if len(lines) > 100:
+        for i in range(50):
+            print(lines[i])
+
+        print("\n...\n")
+
+        for i in range(50):
+            print(lines[-i])
+        pass
+    else:
+        for line in lines:
+            print(line)
     print("::END::")
 
 
