@@ -13,7 +13,7 @@ def generate_test_case(length):
 
 
 def main():
-    max_case = 1
+    max_case = 0
     for file in os.listdir(test_dir):
         name_chunks = file.split('-')
         if len(name_chunks) != 3:
