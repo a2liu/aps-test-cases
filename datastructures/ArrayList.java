@@ -8,9 +8,7 @@ class ArrayList {
     if (capacity < 0) {
       throw new IllegalArgumentException("can't have negative capacity");
     }
-    int[] values = new int[capacity + 1];
-    values[0] = 0;
-    return values;
+    return new int[capacity + 1];
   }
 
   public static void set(int[] arrayList, int index, int value) {
