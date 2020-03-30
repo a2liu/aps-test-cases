@@ -8,7 +8,6 @@ help by using `python3 test.py --help`.
 On Windows computers with python3 installed via traditional installer (not the
 Microsoft store), use `python` instead of `python3`
 
-### Output of Main File
 The test runner compiles your code and runs it; before compiling, it first copies
 your code into a file called `.build/Main.ext` where `ext` is the extension of your
 program, and the `.build` folder is located in the same directory as the test
@@ -31,7 +30,7 @@ to save your run as a test case. If you say yes, you'll ge this prompt:
 Where should this test case by stored?
 ```
 
-**You can use tab completion here;** one tab completes, two tabs will suggest possible
+*You can use tab completion here;* one tab completes, two tabs will suggest possible
 values.
 
 #### Single Test Case
