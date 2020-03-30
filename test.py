@@ -182,6 +182,7 @@ def main():
         result = subprocess.run(['gcc', '-o', binary_file, output_file])
 
     if result.returncode != 0:
+        print()
         return False
 
     print_bold(" Done.")
@@ -196,7 +197,7 @@ def main():
     if test_path is None:
         print("Input file: stdin")
         print("Use Ctrl-D to end input")
-        temp_path = os.path.join(project_dir, ".tmp")
+        temp_path = os.path.join(bin_dir, ".tmp")
         txt = sys.stdin.read()
         with open(temp_path, 'w') as f:
             f.write(txt)
