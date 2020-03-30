@@ -27,7 +27,7 @@ def debug(*value):
 
 def print_bold(value, end='\n'):
     if value is not None:
-        print("\033[1m" + value + "\033[0m", end=end)
+        print("\033[1m" + str(value) + "\033[0m", end=end)
 
 
 def print_value_red(value, title=None):
@@ -96,8 +96,11 @@ def test_command(command, test_file_path, assert_correct=False):
         correct_answer = f.read().strip()
 
     if answer == correct_answer:
-        print("Test case `" + test_file_name + "` passed in " +
-              str(time_elapsed) + " seconds")
+        print("Test case `", end='')
+        print_bold(test_file_name, end='')
+        print("` passed in ", end='')
+        print_bold(time_elapsed, end='')
+        print(" seconds")
         return True
     else:
         with open(test_file_path) as f:
@@ -137,7 +140,7 @@ def main():
 
     file_path, ext = os.path.splitext(os.path.realpath(sys.argv[1]))
     project_dir = os.path.dirname(os.path.realpath(__file__))
-    bin_dir = os.path.join(project_dir, 'bin')
+    bin_dir = os.path.join(project_dir, '.build')
     filename = os.path.basename(file_path)
     output_file = os.path.join(bin_dir, filename, 'Main' + ext)
     classpath = os.path.join(bin_dir, filename)
@@ -156,7 +159,10 @@ def main():
     info()
 
     if not os.path.exists(os.path.dirname(output_file)):
-        os.makedirs(os.path.dirname(output_file))
+        try:
+            os.makedirs(os.path.dirname(output_file))
+        except Exception as e:
+            info(e)
 
     with open(file_path + ext) as f:
         txt = f.read()
@@ -164,7 +170,7 @@ def main():
     with open(output_file, 'w') as f:
         f.write(txt)
 
-    with open(os.path.join(bin_dir, output_file_basename), 'w') as f:
+    with open(os.path.join(bin_dir, 'Main' + ext), 'w') as f:
         f.write(txt)
 
     print("Compiling code...", end='')
@@ -190,7 +196,7 @@ def main():
     if test_path is None:
         print("Input file: stdin")
         print("Use Ctrl-D to end input")
-        temp_path = os.path.join(project_dir, 'bin', ".tmp")
+        temp_path = os.path.join(project_dir, ".tmp")
         txt = sys.stdin.read()
         with open(temp_path, 'w') as f:
             f.write(txt)
@@ -204,10 +210,19 @@ def main():
             return False
 
         while True:
-            user_input = input("Save this run as a test case? [y/n] ")
+            try:
+                user_input = input("Save this run as a test case? [y/n] ")
+            except EOFError as e:
+                return print()
+
             if not user_input.startswith('y'):
                 return
-            test_case_path = input("Where should the test case be stored? ")
+
+            try:
+                test_case_path = input(
+                    "Where should the test case be stored? ")
+            except EOFError as e:
+                return print()
 
             if not os.path.exists(test_case_path):
                 break
@@ -218,8 +233,8 @@ def main():
 
         try:
             os.makedirs(os.path.dirname(test_case_path))
-        except:
-            pass
+        except Exception as e:
+            info(e)
 
         with open(test_case_path, 'w') as f:
             f.write(txt)
@@ -235,8 +250,12 @@ def main():
         info()
 
         for file in os.listdir(test_path):
-            if file.endswith('ans') or file.startswith('.') or '.' in file:
+            if file.endswith('ans'):
                 continue
+            if '.' in file:
+                print("Skipping file " + file + "because it has an extension.")
+                continue
+
             info("Found input file: " + file)
 
             if test_command(command, os.path.join(test_path, file),
