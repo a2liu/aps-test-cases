@@ -1,6 +1,8 @@
 import java.lang.StringBuilder;
 
 // A hashmap using an array of ints. Stores key-value pairs together.
+// Reserves two values, TOMBSTONE and NULL, that can't be inserted into the map;
+// if they are, bad things will happen.
 //
 // @TODO move values to second half of array, pack keys together.
 class HashMap {
