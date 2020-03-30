@@ -1,19 +1,30 @@
 import java.lang.StringBuilder;
 
+// A hashmap using an array of ints. Stores key-value pairs together.
+//
+// @TODO move values to second half of array, pack keys together.
 class HashMap {
 
-  static float loadFactor = .7f;
-  static int TOMBSTONE = -1;
-  static int NULL = -2;
+  static final float loadFactor = .7f;
+  static final int TOMBSTONE = -1;
+  static final int NULL = -2;
 
-  // Initial capacity must be a power of 2
   static int[] newHashMap(int capacity) {
+
+    int originalCapacity = capacity;
+    for (capacity = 2; capacity < originalCapacity; capacity <<= 1)
+      ;
+
+    System.out.println(capacity);
+
     int arrayLength = capacity * 2 + 1;
     int[] map = new int[arrayLength];
     for (int i = 1; i < arrayLength; i += 2)
       map[i] = NULL;
     return map;
   }
+
+  static int size(int[] hashMap) { return hashMap[0]; }
 
   static int getIndex(int[] hashMap, int key) {
     int capacity = hashMap.length - 1;
@@ -118,10 +129,6 @@ class Main {
     map = HashMap.put(map, 0, 12);
     map = HashMap.put(map, 4, 10);
     map = HashMap.put(map, 2, 11);
-
-    System.out.println(HashMap.get(map, 2));
-    System.out.println(HashMap.get(map, 0));
-    System.out.println(HashMap.get(map, 4));
 
     HashMap.remove(map, 4);
     System.out.println(HashMap.toString(map));
