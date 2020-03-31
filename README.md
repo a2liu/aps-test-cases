@@ -1,12 +1,12 @@
-# aps-test-cases
+# APS Test Cases and Test Runner
 Test cases for APS
 
-## Using the test runner
+## Using the Test Runner
 Use `python3 test.py <source_file> <test_path>` to run the test runner, and get more
 help by using `python3 test.py --help`.
 
 On Windows computers with python3 installed via traditional installer (not the
-Microsoft store), use `python` instead of `python3`
+Microsoft store), use `python` instead of `python3`.
 
 The test runner compiles your code and runs it; before compiling, it first copies
 your code into a file called `.build/Main.ext` where `ext` is the extension of your
