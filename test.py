@@ -20,15 +20,9 @@ will tell you what the output should have been, so that should help.
 readline.set_completer_delims(' \t\n=')
 readline.parse_and_bind("tab: complete")
 
-if '--help' in sys.argv or '-h' in sys.argv:
-    print(HELP_TEXT)
-    exit(0)
 
-if '--debug' in sys.argv:
-    info = lambda *value: print("[DEBUG]:", *value)
-    sys.argv.remove('--debug')
-else:
-    info = lambda *x: None
+def info(*values):
+    pass
 
 
 def print_bold(value, end='\n'):
@@ -120,6 +114,13 @@ def test_command(command, test_file_path, assert_correct=False):
 
 
 def main():
+    global info
+    if '--help' in sys.argv or '-h' in sys.argv:
+        return print(HELP_TEXT)
+
+    if '--debug' in sys.argv:
+        info = lambda *value: print("[DEBUG]:", *value)
+        sys.argv.remove('--debug')
 
     assert_correct = False
     if '--assert' in sys.argv:
