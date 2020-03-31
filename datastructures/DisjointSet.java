@@ -1,6 +1,6 @@
 // Uses size-based ranks. Only optimization not applied is indexing by 1 to
 // avoid set creation requiring two iterations over the array.
-public class DisjoinSet {
+class DisjointSet {
 
   static int[] newSet(int setCount) {
     int[] array = new int[setCount];
