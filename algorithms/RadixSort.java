@@ -44,9 +44,16 @@ class RadixSort {
     }
   }
 
-  // Really should be sort non-negative
   static void radixSort(int[] data, int left, int right, int partitionBit) {
-    if (partitionBit < 0 || left >= right) {
+    if (partitionBit < 0)
+      return;
+    if (left >= right - 256) { // Insertion sort
+      for (int i = left + 1; i < right; ++i) {
+        int key = arr[i], j = i;
+        for (; j > begin && arr[j - 1] > key; j--)
+          arr[j] = arr[j - 1];
+        arr[j] = key;
+      }
       return;
     }
 

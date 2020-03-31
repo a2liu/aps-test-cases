@@ -6,6 +6,7 @@ class MergeSort {
   }
 
   static long mergeSort(int[] arr, int[] scratch, int begin, int end) {
+    // This is insertion sort
     if (begin >= end - 256) {
       long inversions = 0;
       for (int i = begin + 1; i < end; ++i) {
