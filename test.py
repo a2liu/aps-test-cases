@@ -6,7 +6,7 @@ Hi! This is a test runner for APS. The arguemnts are:
 
 python3 test.py [--debug] [--help] [-h] <source_file> <test_path>
 
-  source_file   The source file.
+  source_file   The source file to compile.
   test_path     OPTIONAL. The path for test data. It can be a folder or file.
                 If a test case file is named `test-case-1`, this script will look
                 for a file in the same folder with the name `test-case-1-ans`
@@ -278,10 +278,7 @@ if __name__ == "__main__":
         if ret_value is not None:
             exit(1)
     except Exception as e:
-        print_bold("Got an error:")
-        print()
-        print('   ', e)
-        print()
+        print_bold("Got an error:\n\n    ", e, '\n')
         print("You can use the ", end='')
         print_bold('--help', end='')
         print(" flag to get more information on how to use this test runner.")
