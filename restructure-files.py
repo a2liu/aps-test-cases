@@ -9,4 +9,4 @@ for name in os.listdir(folder_path):
         output_path = os.path.join(path, 'output')
         test_case_path = os.path.join(folder_path, 'test-case-' + name)
         os.rename(input_path, test_case_path)
-        os.rename(output_path, itest_case_path + '-ans')
+        os.rename(output_path, test_case_path + '-ans')
