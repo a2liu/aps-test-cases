@@ -141,7 +141,8 @@ def main():
     project_dir = os.path.dirname(os.path.realpath(__file__))
     bin_dir = os.path.join(project_dir, '.build')
     filename = os.path.basename(file_path)
-    output_file = os.path.join(bin_dir, filename, 'Main' + ext)
+    output_filename = 'Main.java' if ext == '.java' else ('main' + ext)
+    output_file = os.path.join(bin_dir, filename, output_filename)
     classpath = os.path.join(bin_dir, filename)
     binary_file = os.path.join(bin_dir, filename, 'out')
     test_path = os.path.realpath(sys.argv[2]) if len(sys.argv) > 2 else None
@@ -169,7 +170,7 @@ def main():
     with open(output_file, 'w') as f:
         f.write(txt)
 
-    with open(os.path.join(bin_dir, 'Main' + ext), 'w') as f:
+    with open(os.path.join(bin_dir, output_filename), 'w') as f:
         f.write(txt)
 
     print("Compiling code...", end='')
