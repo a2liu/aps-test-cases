@@ -42,7 +42,7 @@ You can compile and run the program using a folder of test cases by doing:
 python3 test.py hw8/Kou.java aps-test-cases/hw8/kou
 ```
 
-This will run all the test cases in the folder `polish` and check them against
+This will run all the test cases in the folder `kou` and check them against
 given answers in the folder.
 
 #### Single Test Case

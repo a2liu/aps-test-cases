@@ -196,7 +196,7 @@ def main():
 
     if test_path is None:
         print("Input file: stdin")
-        print("Use Ctrl-D to end input")
+        print("Use Ctrl-D to end input (Ctrl-Z + Enter on Windows)")
         temp_path = os.path.join(bin_dir, ".tmp")
         txt = sys.stdin.read()
         with open(temp_path, 'w') as f:
