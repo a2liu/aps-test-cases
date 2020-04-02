@@ -26,20 +26,25 @@ def generate_test_case(n, t, m):
 
 
 def main():
+    max_case = 0
     for file in os.listdir(test_dir):
         name_chunks = file.split('-')
-        max_case = 1
-        if len(name_chunks) == 3 and name_chunks[0] == 'test' and name_chunks[
-                1] == 'case':
-            case_num = int(name_chunks[2])
-            if max_case < case_num:
-                max_case = case_num
+        if len(name_chunks) != 3:
+            continue
+        if name_chunks[0] != 'test':
+            continue
+        if name_chunks[1] != 'case':
+            continue
 
-        with open(os.path.join(test_dir, f"test-case-{max_case + 1}"),
-                  'w') as f:
-            f.write(
-                generate_test_case(int(sys.argv[1]), int(sys.argv[2]),
-                                   int(sys.argv[3])))
+        case_num = int(name_chunks[2])
+        if max_case < case_num:
+            max_case = case_num
+
+    txt = generate_test_case(int(sys.argv[1]), int(sys.argv[2]),
+                             int(sys.argv[3]))
+    file = os.path.join(test_dir, f"test-case-{max_case + 1}")
+    with open(file, 'w') as f:
+        f.write(txt)
 
 
 if __name__ == "__main__":
