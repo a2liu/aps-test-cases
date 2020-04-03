@@ -1,5 +1,9 @@
 #!/usr/bin/python3
-import os, sys, subprocess, io, datetime, readline
+import os, sys, subprocess, io, datetime
+import platform
+
+if platform.system() != "Windows":
+    import readline
 
 HELP_TEXT = """
 Hi! This is a test runner for APS. The arguemnts are:
