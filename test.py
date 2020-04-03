@@ -4,6 +4,8 @@ import platform
 
 if platform.system() != "Windows":
     import readline
+    readline.set_completer_delims(' \t\n=')
+    readline.parse_and_bind("tab: complete")
 
 HELP_TEXT = """
 Hi! This is a test runner for APS. The arguemnts are:
@@ -20,9 +22,6 @@ python3 test.py [--debug] [--help] [-h] <source_file> <test_path>
 Please note that this program can't test for presentation errors! However, it
 will tell you what the output should have been, so that should help.
 """
-
-readline.set_completer_delims(' \t\n=')
-readline.parse_and_bind("tab: complete")
 
 
 def info(*values):

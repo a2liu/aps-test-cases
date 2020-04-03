@@ -32,8 +32,8 @@ to save your run as a test case. If you say yes, you'll get this prompt:
 Where should this test case by stored?
 ```
 
-*You can use tab completion here;* one tab completes, two tabs will suggest possible
-values.
+*You can use tab completion here (not on Windows);* one tab completes, two tabs
+will suggest possible values.
 
 #### Folder of Test Cases
 You can compile and run the program using a folder of test cases by doing:
