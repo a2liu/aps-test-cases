@@ -30,7 +30,8 @@ def info(*values):
 
 def print_bold(value, end='\n'):
     if value is not None:
-        print("\033[1m" + str(value) + "\033[0m", end=end)
+        _end = end
+        print("\033[1m" + str(value) + "\033[0m", end=_end)
 
 
 def print_value_red(value, title=None):
