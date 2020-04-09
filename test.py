@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-import os, sys, subprocess, io, datetime
-import platform
+import os, sys, io, datetime, platform
+from subprocess import Popen, PIPE, run
 
 if platform.system() != "Windows":
     import readline
@@ -63,10 +63,7 @@ def print_value(value, title=None):
 
 def run_command(command, test_file):
     start = datetime.datetime.now()
-    result = subprocess.run(command,
-                            stdin=test_file,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    result = run(command, stdin=test_file, stdout=PIPE, stderr=PIPE)
     end = datetime.datetime.now()
     stdout = result.stdout.decode('utf-8').strip()
     stderr = result.stderr.decode('utf-8').strip()
@@ -176,19 +173,29 @@ def main():
     with open(os.path.join(bin_dir, output_filename), 'w') as f:
         f.write(txt)
 
-    print("Compiling code...", end='')
+    print("Compiling code...", end='', flush=True)
     if ext == ".java":
-        result = subprocess.run(['javac', output_file, '-d', classpath])
+        command = ['javac', output_file, '-d', classpath]
     elif ext == ".cpp":
-        result = subprocess.run(['g++', '-o', binary_file, output_file])
+        command = ['g++', '-o', binary_file, output_file]
     elif ext == ".c":
-        result = subprocess.run(['gcc', '-o', binary_file, output_file])
-
-    if result.returncode != 0:
-        print()
+        command = ['gcc', '-o', binary_file, output_file]
+    process = Popen(command, stdout=PIPE, stderr=PIPE)
+    out, err = process.communicate()
+    out, err = out.decode('utf-8').strip(), err.decode('utf-8').strip()
+    if process.returncode != 0:
+        print_bold(" ERROR.\n")
+        if out != "":
+            print(out)
+        if err != "":
+            print(err)
         return False
 
     print_bold(" Done.")
+    if out != "":
+        print(out)
+    if err != "":
+        print(err)
 
     if just_compile:
         return
@@ -281,7 +288,7 @@ if __name__ == "__main__":
         if ret_value is not None:
             exit(1)
     except Exception as e:
-        print_bold("Got an error:\n\n    ", e, '\n')
+        print_bold("Got an error:\n\n    " + str(e), '\n')
         print("You can use the ", end='')
         print_bold('--help', end='')
         print(" flag to get more information on how to use this test runner.")
