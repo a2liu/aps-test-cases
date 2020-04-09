@@ -49,10 +49,10 @@ class RadixSort {
       return;
     if (left >= right - 256) { // Insertion sort
       for (int i = left + 1; i < right; ++i) {
-        int key = arr[i], j = i;
-        for (; j > begin && arr[j - 1] > key; j--)
-          arr[j] = arr[j - 1];
-        arr[j] = key;
+        int key = data[i], j = i;
+        for (; j > left && data[j - 1] > key; j--)
+          data[j] = data[j - 1];
+        data[j] = key;
       }
       return;
     }
