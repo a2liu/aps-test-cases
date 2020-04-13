@@ -1,2 +1,7 @@
 .build
 .DS_Store
+.ccls-cache/
+*.class
+*.out
+# VM crash logs
+hs_err_pid*
