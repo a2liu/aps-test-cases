@@ -47,7 +47,7 @@ def print_value(value, title=None):
     if value is None:
         return
     print_bold(title)
-    print("::START::")
+    # print("::START::")
     lines = value.split('\n')
     if len(lines) > 100:
         for i in range(50):
@@ -58,7 +58,7 @@ def print_value(value, title=None):
     else:
         for line in lines:
             print(line)
-    print("::END::")
+    # print("::END::")
 
 
 def run_command(command, test_file):
