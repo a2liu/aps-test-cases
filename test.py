@@ -177,7 +177,7 @@ def main():
     if ext == ".java":
         command = ['javac', output_file, '-d', classpath]
     elif ext == ".cpp":
-        command = ['g++', '-o', binary_file, output_file]
+        command = ['g++', '-o', binary_file, '-std=c++11', output_file]
     elif ext == ".c":
         command = ['gcc', '-o', binary_file, output_file]
     process = Popen(command, stdout=PIPE, stderr=PIPE)
@@ -190,7 +190,6 @@ def main():
         if err != "":
             print(err)
         return False
-
     print_bold(" Done.")
     if out != "":
         print(out)
